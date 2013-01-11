@@ -1,5 +1,5 @@
 var link = document.createElement("link");
-link.href = "http://www.magicscroll.net/bookmarklet/staticscroll.css";
+link.href = "staticscroll.css";
 link.type = "text/css";
 link.rel = "stylesheet";
 document.getElementsByTagName("head")[0].appendChild(link);
@@ -10,7 +10,7 @@ function loadScript(src) {
 	document.documentElement.appendChild(script);
 }
 
-var scripts = ["http://www.magicscroll.net/bookmarklet/readability.js", "http://www.magicscroll.net/bookmarklet/staticScroll.js"];
+var scripts = ["readability.js", "staticScroll.js"];
 
 loadScript(scripts[0]);
 

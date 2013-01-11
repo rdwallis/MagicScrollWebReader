@@ -66,7 +66,7 @@ var staticscroll = {
 			staticscroll.article = readability.article.replace(/align=('|")(left|right)('|")/gi, "").replace(/></g, "> <");
 			//console.log(staticscroll.article);
 			document.body.className = "ss_body";
-			document.body.style.backgroundImage = "url(http://www.magicscroll.net/bookmarklet/images/skewed_print.png)";
+			document.body.style.backgroundImage = "url(images/skewed_print.png)";
 
 		}
 		
