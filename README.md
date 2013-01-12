@@ -28,19 +28,19 @@ in before the user touches the screen.
 * MID: the scroll guide is somewhere between the top and bottom.
 * BOT: the scroll guide is at the very bottom of the screen, meaning the current page has full height.
 
-         TOP        MID       BOT
-     +========+ +--------+ +--------+   ^
-     |        | |        | |        |   | Top Snap/Grab Radius
-     |        | |        | |        |   v
-     |        | |        | |        |
-     |        | |        | |        |   ^
-     |        | |========| |        |   | Mid Grab Radius
-     |        | |        | |        |   | (relative to current guide)
-     |        | |        | |        |   v
-     |        | |        | |        |
-     |        | |        | |        |   ^
-     |        | |        | |        |   | Bottom Snap/Grab Radius
-     +--------+ +--------+ +========+   v
+    .     TOP        MID       BOT
+    . +========+ +--------+ +--------+   ^
+    . |        | |        | |        |   | Top Snap/Grab Radius
+    . |        | |        | |        |   v
+    . |        | |        | |        |
+    . |        | |        | |        |   ^
+    . |        | |========| |        |   | Mid Grab Radius
+    . |        | |        | |        |   | (relative to current guide)
+    . |        | |        | |        |   v
+    . |        | |        | |        |
+    . |        | |        | |        |   ^
+    . |        | |        | |        |   | Bottom Snap/Grab Radius
+    . +--------+ +--------+ +========+   v
 
 ### On Touch Start
 
