@@ -347,15 +347,22 @@ var staticscroll = {
 			var getScrollPos = function() {
 				return staticscroll.topPage.clientHeight;
 			};
+			var getScrollOffset = function() {
+				return staticscroll.topPage.offsetTop;
+			};
 			var setScrollPos = function(y) {
+				y = Math.max(0,y - staticscroll.topPage.offsetTop);
+				y = Math.min(getMaxScroll(), y);
+				console.log("setting scroll to",y);
 				staticscroll.topPage.style.height = y + "px";
 				staticscroll.topRightHider.style.height = y + "px";
+				console.log("	scroll is now at",getScrollPos());
 			};
 			var snapGuideTop = function() {
 				setScrollPos(0);
 			};
 			var snapGuideBot = function() {
-				setScrollPos(getMaxScroll());
+				setScrollPos(getMaxScroll()+getScrollOffset());
 			};
 			var getScrollState = function() {
 				var y = getScrollPos();
@@ -374,7 +381,8 @@ var staticscroll = {
 				return y < radius;
 			};
 			var inBotRadius = function(x,y) {
-				return y > getMaxScroll() - radius;
+				console.log("inBotRadius",y,getMaxScroll(), getMaxScroll()+getScrollOffset());
+				return y > getMaxScroll()+getScrollOffset() - radius;
 			};
 			var inMidRadius = function(x,y) {
 				return Math.abs(y - getScrollPos()) < radius;
@@ -388,24 +396,32 @@ var staticscroll = {
 				if (state == "TOP") {
 					if (inTopRadius(x,y)) {
 						isAnchored = true;
+						console.log("snap top in top");
 					}
-					else if (inBotRadius()) {
+					else if (inBotRadius(x,y)) {
 						isAnchored = true;
 						pageBack();
+						console.log("snap bot in top");
 					}
 				}
 				else if (state == "MID") {
 					if (inMidRadius(x,y)) {
 						isAnchored = true;
+						console.log("snap mid");
 					}
 				}
 				else if (state == "BOT") {
 					if (inTopRadius(x,y)) {
 						isAnchored = true;
 						pageForward();
+						console.log("snap top in bot");
 					}
-					else if (inBotRadius()) {
+					else if (inBotRadius(x,y)) {
 						isAnchored = true;
+						console.log("snap bot in bot");
+					}
+					else {
+						console.log("nothing from bot");
 					}
 				}
 
@@ -420,6 +436,7 @@ var staticscroll = {
 			};
 			var touchEnd = function(x,y) {
 				if (isAnchored) {
+					console.log("ending");
 					isAnchored = false;
 					if (inTopRadius(x,y)) {
 						snapGuideTop();
@@ -430,6 +447,7 @@ var staticscroll = {
 				}
 			};
 			var touchCancel = function(x,y) {
+				console.log("canceling");
 				touchEnd(x,y);
 			};
 
@@ -463,19 +481,24 @@ var staticscroll = {
 					callWithXY(touchEnd,evt);
 				};
 				var cancel = function(evt) {
+					console.log(evt);
 					isTouching = false;
 					callWithXY(touchCancel,evt);
 				};
 
-				document.addEventListener('mousedown',		start);
-				document.addEventListener('mousemove',		move);
-				document.addEventListener('mouseup',		end);
-				document.addEventListener('mouseout',		cancel);
+				// Test touch controls with the mouse.
+				document.body.addEventListener('mousedown',		start);
+				document.body.addEventListener('mousemove',		move);
+				document.body.addEventListener('mouseup',		end);
+				// window.addEventListener('mouseout', cancel);
 
-				document.addEventListener('touchstart',		start);
-				document.addEventListener('touchmove',		move);
-				document.addEventListener('touchend',		end);
-				document.addEventListener('touchcancel',	cancel);
+				document.body.addEventListener('touchstart',		start);
+				document.body.addEventListener('touchmove',		move);
+				document.body.addEventListener('touchend',		end);
+				//document.addEventListener('touchcancel',	cancel);
+
+				document.body.ondragstart = function() { return false; };
+				document.body.ondrop = function() { return false; };
 			})();
 		})();
 
