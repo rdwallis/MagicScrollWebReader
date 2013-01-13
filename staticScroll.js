@@ -459,6 +459,7 @@ var staticscroll = {
 					if (evt.touches && evt.touches.length > 0) { // touch
 						x = evt.touches[0].pageX;
 						y = evt.touches[0].pageY;
+						evt.preventDefault();
 					}
 					else { // mouse
 						x = evt.pageX;
@@ -492,7 +493,7 @@ var staticscroll = {
 				document.body.addEventListener('mouseup',		end);
 				// window.addEventListener('mouseout', cancel);
 
-				document.body.addEventListener('touchstart',		start);
+				document.body.addEventListener('touchstart',	start);
 				document.body.addEventListener('touchmove',		move);
 				document.body.addEventListener('touchend',		end);
 				//document.addEventListener('touchcancel',	cancel);
