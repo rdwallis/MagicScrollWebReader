@@ -526,10 +526,36 @@ var staticscroll = {
 					touchEnd(lastX,lastY);
 				};
 
-				// Test touch controls with the mouse.
-				// Prevent mouse-dragging of content when scrolling.
-				document.body.ondragstart = function() { return false; };
-				document.body.ondrop = function() { return false; };
+                // Only allow mouse touch events when shift key is pressed.
+                var mouseCanDrag = false;
+                document.addEventListener("keydown", function(evt) {
+                    evt = evt || window.event;
+                    if (evt.keyCode == 16) {
+                        mouseCanDrag = true;
+                        setCursor("n-resize");
+                    }
+                });
+                document.addEventListener("keyup", function(evt) {
+                    evt = evt || window.event;
+                    if (evt.keyCode == 16) {
+                        mouseCanDrag = false;
+                        setCursor("auto");
+                    }
+                });
+                var wrapMouseCallback = function(callback) {
+                    return function(evt) {
+                        if (mouseCanDrag) {
+                            // only call event if we're allowing the mouse to drag.
+                            callback(evt);
+                            // prevent text-selecting.
+                            evt.preventDefault();
+                        }
+                        else if (isTouching) {
+                            // end our touch operation if needed.
+                            end(evt);
+                        }
+                    };
+                };
 
 				// Add touch controls to the elements comprising the page.
 				var touchElements = [
@@ -545,11 +571,21 @@ var staticscroll = {
 					elm.addEventListener('touchend',	end);
 					elm.addEventListener('touchcancel',	cancel);
 
-					// emulate touch controls with mouse
-					elm.addEventListener('mousedown',	start);
-					elm.addEventListener('mousemove',	move);
-					elm.addEventListener('mouseup',		end);
+                    // emulate touch controls with mouse
+                    elm.addEventListener('mousedown',	wrapMouseCallback(start));
+                    elm.addEventListener('mousemove',	wrapMouseCallback(move));
+                    elm.addEventListener('mouseup',		wrapMouseCallback(end));
 				}
+
+                // Set the cursor over the page contents.
+                var setCursor = function(c) {
+                    var i,len,elm;
+                    for (i=0, len=touchElements.length; i<len; i++) {
+                        elm = staticscroll[touchElements[i]];
+                        elm.style.cursor = c;
+                    }
+                };
+
 			})();
 		})();
 
@@ -571,6 +607,7 @@ var staticscroll = {
 			+ "<tr><td align='right' width='240px'><b>[+]/[-]</b></td><td>Increase / Decrease Scroll Speed</td></tr>"
 			+ "<tr><td align='right' width='240px'><b>[LEFT]/[PAGE UP]</b></td><td>Previous Page</td></tr>"
 			+ "<tr><td align='right' width='240px'><b>[RIGHT]/[PAGE DOWN]</b></td><td>Next Page</td></tr>"
+			+ "<tr><td align='right' width='240px'><b>[SHIFT+DRAG]</b></td><td>Move Scroll Line</td></tr>"
 			+ "<tr><td align='right' width='240px'><b>[H]</b></td><td>Show or Hide this Dialog</td></tr>"
 			+ "</table>";
 			staticscroll.innerHotKeyDialog.style.marginTop = (((window.innerHeight - 220) / 2) - 50) + "px";

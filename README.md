@@ -14,9 +14,9 @@ Touch Control Status
 
 Touch controls have been tested on a Samsung Galaxy Tab 7.1, with Android's native browser and Chrome.
 
-[Try the touch control demo here.](http://shaunew.github.com/MagicScrollWebReader/demo.htm)
+[Try the touch control demo here.](http://rdwallis.github.com/MagicScrollWebReader/demo.htm)
 
-The mouse controls currently emulate the touch controls.
+You can hold **SHIFT** to try the touch controls with the mouse.
 
 Scroll Design
 -------------
