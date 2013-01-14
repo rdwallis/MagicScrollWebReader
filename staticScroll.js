@@ -164,6 +164,11 @@ var staticscroll = {
 		// rightHider.style.backgroundImage = bground;
 		document.body.appendChild(bottomHider);
 
+		staticscroll.topHider = topHider;
+		staticscroll.rightHider = rightHider;
+		staticscroll.leftHider = leftHider;
+		staticscroll.bottomHider = bottomHider;
+
 		staticscroll.topRightHider = document.createElement("DIV");
 		staticscroll.topRightHider.style.top = "30px";
 		staticscroll.topRightHider.style.left= (left + width + 30) + "px";
@@ -171,6 +176,7 @@ var staticscroll = {
 		staticscroll.topRightHider.className = "ss_top_hider";
 		// staticscroll.topRightHider.style.backgroundImage = bground;
 		document.body.appendChild(staticscroll.topRightHider);	
+
 
 		var hotkeyPrompt = document.createElement("DIV");
 		hotkeyPrompt.innerHTML = "Press [H] to view [H]otkeys";
@@ -180,6 +186,12 @@ var staticscroll = {
 		};
 		document.body.appendChild(hotkeyPrompt);		
 
+		/*
+		staticscroll.debugLabel = document.createElement("DIV");
+		staticscroll.debugLabel.innerHTML = "DEBUGGING";
+		staticscroll.debugLabel.className = "ss_debug_label";
+		document.body.appendChild(staticscroll.debugLabel);		
+		*/
 		
 		staticscroll.processPages();
 
@@ -281,60 +293,15 @@ var staticscroll = {
 		window.onmousewheel = mouseScroll;
 		document.documentElement.addEventListener("DOMMouseScroll", mouseScroll, false);
         
-		// Touch control design:
 
-		// Scroll States
-		// =============
-
-		// Listed below are the three possible states that the scroll guide can be
-		// in before the user touches the screen.
-
-		// * TOP: the scroll guide is at the very top of the screen,
-		// 		meaning the current page has a zero height.
-		// * MID: the scroll guide is somewhere between the top and bottom.
-		// * BOT: the scroll guide is at the very bottom of the screen,
-		// 		meaning the current page has full height.
-
-		//         TOP        MID       BOT
-		//     +========+ +--------+ +--------+   ^
-		//     |        | |        | |        |   | Top Snap/Grab Radius
-		//     |        | |        | |        |   v
-		//     |        | |        | |        |
-		//     |        | |        | |        |   ^
-		//     |        | |========| |        |   | Mid Grab Radius
-		//     |        | |        | |        |   | (relative to current guide)
-		//     |        | |        | |        |   v
-		//     |        | |        | |        |
-		//     |        | |        | |        |   ^
-		//     |        | |        | |        |   | Bottom Snap/Grab Radius
-		//     +--------+ +--------+ +========+   v
-
-		// On Touch Start:
-		//    A touch starting within any radii listed above will cause
-		//    the scroll guide to snap to the cursor.
-
-		//    In the TOP state, touching within the BOT's radius
-		//    should execute "showPrevPage", bringing us to the
-		//    BOT state of the previous page.
-
-		//    In the BOT state, touching within the TOP's radius
-		//    should execute "showNextPage", bringing us to the
-		//    TOP state of the next page.
-
-		// On Touch Move:
-		//    Any move will drag the scroll guide if it is currently snapped to the cursor.
-
-		//    In the MID state, any move within the radii of the scroll guide
-		//    should cause it to snap to the cursor.
-
-		// On Touch End:
-		//    Any touch ending within the top or bottom radii will snap to that
-		//    respective edge.
-
+		// TOUCH CONTROLS
 		(function(){
 
 			// Utility functions for staticscroll
 			// (used by the touch control functions)
+			var setDebugMsg = function(msg) {
+				staticscroll.debugLabel.innerHTML = msg;
+			};
 			var pageForward = function() {
 				staticscroll.showNextPage();
 			};
@@ -353,10 +320,9 @@ var staticscroll = {
 			var setScrollPos = function(y) {
 				y = Math.max(0,y - staticscroll.topPage.offsetTop);
 				y = Math.min(getMaxScroll(), y);
-				console.log("setting scroll to",y);
 				staticscroll.topPage.style.height = y + "px";
 				staticscroll.topRightHider.style.height = y + "px";
-				console.log("	scroll is now at",getScrollPos());
+				//staticscroll.topPage.style.background = "#FFF";
 			};
 			var snapGuideTop = function() {
 				setScrollPos(0);
@@ -381,7 +347,6 @@ var staticscroll = {
 				return y < radius;
 			};
 			var inBotRadius = function(x,y) {
-				console.log("inBotRadius",y,getMaxScroll(), getMaxScroll()+getScrollOffset());
 				return y > getMaxScroll()+getScrollOffset() - radius;
 			};
 			var inMidRadius = function(x,y) {
@@ -392,36 +357,29 @@ var staticscroll = {
 			// High level touch functions
 			var touchStart = function(x,y) {
 				var state = getScrollState();
-				console.log(state,x,y,getScrollPos());
 				if (state == "TOP") {
 					if (inTopRadius(x,y)) {
 						isAnchored = true;
-						console.log("snap top in top");
 					}
 					else if (inBotRadius(x,y)) {
 						isAnchored = true;
 						pageBack();
-						console.log("snap bot in top");
 					}
 				}
 				else if (state == "MID") {
 					if (inMidRadius(x,y)) {
 						isAnchored = true;
-						console.log("snap mid");
 					}
 				}
 				else if (state == "BOT") {
 					if (inTopRadius(x,y)) {
 						isAnchored = true;
 						pageForward();
-						console.log("snap top in bot");
 					}
 					else if (inBotRadius(x,y)) {
 						isAnchored = true;
-						console.log("snap bot in bot");
 					}
 					else {
-						console.log("nothing from bot");
 					}
 				}
 
@@ -433,10 +391,13 @@ var staticscroll = {
 				if (isAnchored) {
 					setScrollPos(y);
 				}
+				if (inTopRadius(x,y)) {
+				}
+				else {
+				}
 			};
 			var touchEnd = function(x,y) {
 				if (isAnchored) {
-					console.log("ending");
 					isAnchored = false;
 					if (inTopRadius(x,y)) {
 						snapGuideTop();
@@ -447,24 +408,26 @@ var staticscroll = {
 				}
 			};
 			var touchCancel = function(x,y) {
-				console.log("canceling");
 				touchEnd(x,y);
 			};
 
 			// Low level touch functions
 			// (maps our functions to the proper mouse and touch events)
 			(function(){
+				var lastX, lastY;
 				var callWithXY = function(func,evt) {
 					var x,y;
 					if (evt.touches && evt.touches.length > 0) { // touch
 						x = evt.touches[0].pageX;
 						y = evt.touches[0].pageY;
-						evt.preventDefault();
+						evt.preventDefault(); // prevent touch dragging behavior
 					}
 					else { // mouse
 						x = evt.pageX;
 						y = evt.pageY;
 					}
+					lastX = x;
+					lastY = y;
 					func(x,y);
 				};
 				var isTouching = false;
@@ -476,30 +439,39 @@ var staticscroll = {
 					if (isTouching) {
 						callWithXY(touchMove,evt);
 					}
+					else {
+						start(evt);
+					}
 				};
 				var end = function(evt) {
 					isTouching = false;
-					callWithXY(touchEnd,evt);
+					touchEnd(lastX,lastY);
 				};
 				var cancel = function(evt) {
-					console.log(evt);
 					isTouching = false;
-					callWithXY(touchCancel,evt);
+					touchEnd(lastX,lastY);
 				};
 
 				// Test touch controls with the mouse.
 				document.body.addEventListener('mousedown',		start);
 				document.body.addEventListener('mousemove',		move);
 				document.body.addEventListener('mouseup',		end);
-				// window.addEventListener('mouseout', cancel);
+				document.body.addEventListener('mouseout', cancel);
 
-				document.body.addEventListener('touchstart',	start);
-				document.body.addEventListener('touchmove',		move);
-				document.body.addEventListener('touchend',		end);
-				//document.addEventListener('touchcancel',	cancel);
-
+				// Prevent mouse-dragging of content when scrolling.
 				document.body.ondragstart = function() { return false; };
 				document.body.ondrop = function() { return false; };
+
+				// Add touch controls to the elements comprising the page.
+				var touchElements = ["topPage", "bottomPage", "topHider", "bottomHider", "leftHider", "rightHider"];
+				var i,len,elm;
+				for (i=0, len=touchElements.length; i<len; i++) {
+					elm = touchElements[i];
+					staticscroll[elm].addEventListener('touchstart',	start);
+					staticscroll[elm].addEventListener('touchmove',		move);
+					staticscroll[elm].addEventListener('touchend',		end);
+					staticscroll[elm].addEventListener('touchcancel',	cancel);
+				}
 			})();
 		})();
 

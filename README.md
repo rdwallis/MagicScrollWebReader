@@ -12,13 +12,13 @@ The icons are taken from the Gnome High Contrast Theme and used under the terms 
 Touch Control Status
 --------------------
 
-Touch controls are being added.  They can be tested here:
+Touch controls have been tested on a Samsung Galaxy Tab 7.1, with Android's native browser and Chrome.
 
 http://shaunew.github.com/MagicScrollWebReader/demo.htm
 
 The mouse controls currently emulate the touch controls accurately, but touch motions do not work on a mobile device yet.
 
-Scroll States
+Scroll Design
 -------------
 
 Listed below are the three possible states that the scroll guide can be
