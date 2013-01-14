@@ -1138,7 +1138,7 @@ var staticscroll = {
 				staticscroll.nextWordLocalVar.wordLength = staticscroll.nextWordLocalVar.remaining.nextWordIndex(staticscroll.nextWordLocalVar.pageLength + 1);
 				var pageText = staticscroll.nextWordLocalVar.remaining.substring(0, staticscroll.nextWordLocalVar.wordLength);
 				staticscroll.prepPage.innerHTML = pageText;
-				if (wordCount++ % 500 == 0) {
+				if (wordCount++ % 100 == 0) {  //Give Gecko A Rest
 					setTimeout(setPageHeight, 1);
 				} else {
 					setPageHeight();
