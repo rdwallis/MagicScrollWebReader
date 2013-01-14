@@ -141,6 +141,14 @@ body {
 	top: 63px;
 }
 
+.ss_debug_label {
+	z-index: 7;
+	position:absolute;
+	top: 0px;
+	right: 0px;
+	padding: 2px;
+	color: #8f8f8f;
+}
 
 .ss_hotkey_prompt {
 	z-index: 7;
