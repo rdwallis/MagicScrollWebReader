@@ -57,6 +57,9 @@ In the BOT state, touching within the TOP's radius
 should execute "showNextPage", bringing us to the
 TOP state of the next page.
 
+Any touch starting outside the radii will defer the
+scroll guide grab until the touch moves into the radii.
+
 ### On Touch Move:
 
 Any move will drag the scroll guide if it is currently snapped to the cursor.

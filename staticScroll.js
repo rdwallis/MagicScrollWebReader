@@ -294,7 +294,7 @@ var staticscroll = {
 		document.documentElement.addEventListener("DOMMouseScroll", mouseScroll, false);
         
 
-		// TOUCH CONTROLS
+		// TOUCH CONTROLS (see README.md for design overview)
 		(function(){
 
 			//////////////////////////////////////////////////////////////////////
@@ -318,9 +318,7 @@ var staticscroll = {
 				return hToY(getTopPageHeight());
 			};
 			var setScrollPos = function(y) {
-				console.log("setting scroll to",y);
 				setTopPageHeight(yToH(y));
-				console.log("   scroll now at",getScrollPos());
 			};
 			var scrollTop = function() {
 				setScrollPos(0);
@@ -375,54 +373,104 @@ var staticscroll = {
 			};
 
 			//////////////////////////////////////////////////////////////////////
+			// Scroll Anchor
+			// (An anchor connects our touch motion to the horizontal scroll guide)
+			var anchor = (function() {
+
+				var on = false;
+				var offset = 0; // distance between touch and scroll
+
+				// enable anchor exactly at Y
+				var set = function(y) {
+					offset = 0;
+					on = true;
+				};
+				// enable anchor relative to Y
+				var setWithOffset = function(y) {
+					offset = y - getScrollPos();
+					on = true;
+				};
+
+				// A predicate allows us to defer anchoring to another moment.
+				var predicate = null; // boolean function
+				var predSet = null;   // which "set" function to use when predicate is met.
+				var setWhen = function(p) {
+					predicate = p;
+					predSet = set;
+				};
+				var setWithOffsetWhen = function(p) {
+					predicate = p;
+					predSet = setWithOffset;
+				};
+
+				// disable anchor
+				var clear = function() {
+					on = false;
+					predicate = null;
+				};
+
+				// Update the anchor position if enabled.
+				var scroll = function(y) {
+
+					// Enable if predicate is met.
+					if (predicate && predicate(y)) {
+						predSet(y);
+						predicate = null;
+						predSet = null;
+					}
+
+					// Update scroll position if enabled.
+					if (on) {
+						setScrollPos(y - offset);
+					}
+				};
+
+				return {
+					set: set,
+					setWithOffset: setWithOffset,
+					setWhen: setWhen,
+					setWithOffsetWhen: setWithOffsetWhen,
+					clear: clear,
+					scroll: scroll,
+					isOn: function() { return on },
+				};
+			})();
+
+			//////////////////////////////////////////////////////////////////////
 			// High level touch functions
-			var isAnchored = false; // is scroll anchored to touch
 			var touchStart = function(x,y) {
 				var state = getScrollState();
+				var scrollY = getScrollPos();
 				if (state == "TOP") {
 					if (inTopRadius(x,y)) {
-						isAnchored = true;
+						anchor.set(y);
 					}
 					else if (inBotRadius(x,y)) {
-						isAnchored = true;
+						anchor.set(y);
 						pageBack();
-					}
-				}
-				else if (state == "MID") {
-					if (inMidRadius(x,y)) {
-						isAnchored = true;
 					}
 				}
 				else if (state == "BOT") {
 					if (inTopRadius(x,y)) {
-						isAnchored = true;
+						anchor.set(y);
 						pageForward();
 					}
 					else if (inBotRadius(x,y)) {
-						isAnchored = true;
-					}
-					else {
+						anchor.set(y);
 					}
 				}
-				var intop = inTopRadius(x,y);
-				var inbot = inBotRadius(x,y);
-				var inmid = inMidRadius(x,y);
-				console.log(state, x, y, intop, inbot, inmid, isAnchored);
-
-				if (isAnchored) {
-					setScrollPos(y);
+				else if (state == "MID") {
+					anchor.setWithOffsetWhen(function(y) {
+						return inMidRadius(0,y);
+					});
 				}
+				anchor.scroll(y);
 			};
 			var touchMove = function(x,y) {
-				if (isAnchored) {
-					setScrollPos(y);
-				}
-				else {
-				}
+				anchor.scroll(y);
 			};
 			var touchEnd = function(x,y) {
-				if (isAnchored) {
-					isAnchored = false;
+				if (anchor.isOn()) {
 					if (inTopRadius(x,y)) {
 						scrollTop();
 					}
@@ -430,6 +478,7 @@ var staticscroll = {
 						scrollBot();
 					}
 				}
+				anchor.clear();
 			};
 			var touchCancel = function(x,y) {
 				touchEnd(x,y);
@@ -445,7 +494,9 @@ var staticscroll = {
 					if (evt.touches && evt.touches.length > 0) { // touch
 						x = evt.touches[0].pageX;
 						y = evt.touches[0].pageY;
-
+						// disable default touch controls to prevent
+						// content-dragging, etc.
+						evt.preventDefault();
 					}
 					else { // mouse
 						x = evt.pageX;
@@ -455,9 +506,6 @@ var staticscroll = {
 					lastY = y;
 					func(x,y);
 
-					// disable default touch controls to prevent
-					// content-dragging, etc.
-					evt.preventDefault();
 				};
 				var isTouching = false;
 				var start = function(evt) {
@@ -478,26 +526,29 @@ var staticscroll = {
 					touchEnd(lastX,lastY);
 				};
 
-
 				// Test touch controls with the mouse.
 				// Prevent mouse-dragging of content when scrolling.
 				document.body.ondragstart = function() { return false; };
 				document.body.ondrop = function() { return false; };
 
 				// Add touch controls to the elements comprising the page.
-				var touchElements = ["topPage", "bottomPage", "topHider", "bottomHider", "leftHider", "rightHider"];
+				var touchElements = [
+					"topPage", "bottomPage",
+					"topRightHider",
+					"topHider", "bottomHider", "leftHider", "rightHider",
+					"progressIndicator"];
 				var i,len,elm;
 				for (i=0, len=touchElements.length; i<len; i++) {
-					elm = touchElements[i];
-					staticscroll[elm].addEventListener('touchstart',	start);
-					staticscroll[elm].addEventListener('touchmove',		move);
-					staticscroll[elm].addEventListener('touchend',		end);
-					staticscroll[elm].addEventListener('touchcancel',	cancel);
+					elm = staticscroll[touchElements[i]];
+					elm.addEventListener('touchstart',	start);
+					elm.addEventListener('touchmove',	move);
+					elm.addEventListener('touchend',	end);
+					elm.addEventListener('touchcancel',	cancel);
 
 					// emulate touch controls with mouse
-					staticscroll[elm].addEventListener('mousedown',		start);
-					staticscroll[elm].addEventListener('mousemove',		move);
-					staticscroll[elm].addEventListener('mouseup',		end);
+					elm.addEventListener('mousedown',	start);
+					elm.addEventListener('mousemove',	move);
+					elm.addEventListener('mouseup',		end);
 				}
 			})();
 		})();
