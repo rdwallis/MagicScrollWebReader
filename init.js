@@ -1,4 +1,13 @@
-var basedir="http://900.magicscrollreader.appspot.com/bookmarklet/";
+var log = function(s, level) {
+	if (!level) {
+		level = 0;
+	}
+	if ((level < 5) && (typeof console !== 'undefined')) {
+		console.log(s);
+	}
+};
+
+var basedir="http://www.magicscroll.net/bookmarklet/";
 
 var link = document.createElement("link");
 link.href = basedir + "staticscroll.css";
@@ -12,10 +21,9 @@ function loadScript(src) {
 	document.documentElement.appendChild(script);
 }
 
-var scripts = ["log.js", "readability.js", "staticscroll.js"];
+var scripts = ["readability.js", "staticscroll.js"];
 
 loadScript(scripts[0]);
-loadScript(scripts[1]);
 
 
 
@@ -24,7 +32,7 @@ var intId = setInterval("loadStaticScroll()", 10);
 function loadStaticScroll() {
 	if (readability) {
 		clearInterval(intId);
-		loadScript(scripts[2]);
+		loadScript(scripts[1]);
 	}
 }
 

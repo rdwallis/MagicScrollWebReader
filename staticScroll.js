@@ -209,6 +209,7 @@ var staticscroll = {
 	},
 
 	registerHotKeys: function() {
+		log("Registering HotKeys", 2);
 		document.onkeydown = function (event) {
 			if (staticscroll.hotKeysEnabled) {
 				var arrow = {pageDown: 34, pageUp: 33, left: 37, up: 38, right: 39, down: 40, plus: 107, minus: 109, space: 32, h: 72 };
@@ -263,14 +264,14 @@ var staticscroll = {
 		};
 		var mouseScroll = function(event) {
 			var delta = 0;
-			 
+			log("Scroll detected", 2); 
 		    if (!event) event = window.event;
 		 
 		    // normalize the delta
 		    if (event.wheelDelta) {
 		 
-		    	if ((!staticscroll.magicMouse) && (Math.abs(event.wheelDelta) >= 60)) {
-		        	delta = event.wheelDelta / 60;	
+		    	if ((!staticscroll.magicMouse) && (Math.abs(event.wheelDelta) >= 120)) {
+		        	delta = event.wheelDelta / 120;	
 		        } else {
 
 		        	staticscroll.magicMouse = true;
@@ -282,18 +283,22 @@ var staticscroll = {
 		    } else if (event.detail) {
 		 
 		        // W3C
-		        delta = -event.detail / 2;
+		        delta = -event.detail;
+		    }
+		    log("Delta: " + delta, 2);
+		    if (delta == 0) {
+		    	delta = 1;
 		    }
 		    var count = 0;
 		    if (staticscroll.magicMouse) {
 		    	staticscroll.scroll(delta);
 		    } else if (delta < 0) {
-		    	while (--count > delta) {
+		    	while (count-- > delta) {
 		    		staticscroll.scrollForward();
 		    	};
 
 		    } else {
-		    	while (++count < delta) {
+		    	while (count++ < delta) {
 		    		staticscroll.scrollBackward();
 		    	};
 		    	
@@ -661,7 +666,7 @@ var staticscroll = {
 		}
 
 
-		staticscroll.resizeTimer = setTimeout(resize(), 10);
+		staticscroll.resizeTimer = setTimeout(resize, 10);
 		
 
 
@@ -1173,7 +1178,7 @@ var staticscroll = {
 				staticscroll.nextWordLocalVar.wordLength = staticscroll.nextWordLocalVar.remaining.nextWordIndex(staticscroll.nextWordLocalVar.pageLength + 1);
 				var pageText = staticscroll.nextWordLocalVar.remaining.substring(0, staticscroll.nextWordLocalVar.wordLength);
 				staticscroll.prepPage.innerHTML = pageText;
-				if (wordCount++ % 100 == 0) {  //Give Gecko A Rest
+				if (wordCount++ % 75 == 0) {  //Give Gecko A Rest
 					setTimeout(setPageHeight, 1);
 				} else {
 					setPageHeight();

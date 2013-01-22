@@ -1,4 +1,13 @@
-var basedir="http://900.magicscrollreader.appspot.com/bookmarklet/";
+var log = function(s, level) {
+	if (!level) {
+		level = 0;
+	}
+	if ((level < 5) && (typeof console !== 'undefined')) {
+		console.log(s);
+	}
+};
+
+var basedir="http://www.magicscroll.net/bookmarklet/";
 
 var link = document.createElement("link");
 link.href = basedir + "staticscroll.css";
@@ -12,15 +21,11 @@ function loadScript(src) {
 	document.documentElement.appendChild(script);
 }
 
-var scripts = ["log.js", "staticscroll.js"];
-
-loadScript(scripts[0]);
-
 var readability = {
-	article: document.body.innerHTML.replace("[HOST]", window.location.host)
+	article: document.body.innerHTML.replace("[BASEDIR]", basedir)
 }
 
-loadScript(scripts[1]);
+loadScript("staticscroll.js");
 
 
 
