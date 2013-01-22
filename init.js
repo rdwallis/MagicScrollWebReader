@@ -7,6 +7,25 @@ var log = function(s, level) {
 	}
 };
 
+String.prototype.nextWordIndex = function(startpos) {
+	var sub = this.substring(startpos || 0);
+	var indexOf = sub.search(/(<|\s|>\S)/img);
+	if (indexOf >= 0) {
+		if (sub[indexOf] === "<") {
+			indexOf = sub.search(/>/img);
+			if (indexOf == -1) {
+				return sub.search(/</img) + (startpos || 0);
+			}
+		}
+		if ((sub[indexOf] === ">") && (indexOf < sub.length - 2)) {
+			indexOf++;
+		}
+		return indexOf + (startpos || 0);
+	} else {
+		return indexOf;
+	}
+};
+
 var basedir="http://www.magicscroll.net/bookmarklet/";
 
 var link = document.createElement("link");
