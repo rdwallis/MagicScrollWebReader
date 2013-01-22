@@ -798,7 +798,7 @@ var staticscroll = {
 	createUI: function() {
 		log("Creating UI 8", 2);
 		var nextButton = document.createElement("img");
-		nextButton.src = "http://www.magicscroll.net/bookmarklet/images/next_1.png";
+		nextButton.src = basedir + "images/next_1.png";
 		nextButton.className = "ss_nav_button ss_unselected";
 		var width = Math.round(Math.min(window.innerWidth - 60, Math.max(window.innerHeight * 0.618, 400) + 20));
 		var left = (((window.innerWidth - (width + 120)) / 4) - 24);
@@ -821,7 +821,7 @@ var staticscroll = {
 		}
 
 		var prevButton = document.createElement("img");
-		prevButton.src = "http://www.magicscroll.net/bookmarklet/images/previous_1.png";
+		prevButton.src = basedir + "images/previous_1.png";
 		prevButton.className = "ss_nav_button ss_unselected";
 		prevButton.style.paddingLeft = left;
 		prevButton.style.paddingRight = left;
@@ -845,7 +845,7 @@ var staticscroll = {
 			
 
 		var fastButton = document.createElement("img");
-		fastButton.src = "http://www.magicscroll.net/bookmarklet/images/plus_1.png";
+		fastButton.src = basedir + "images/plus_1.png";
 		fastButton.title = "Increase Scroll Speed";
 
 		fastButton.className = "ss_control_button ss_fast_button ss_unselected";
@@ -861,7 +861,7 @@ var staticscroll = {
 		}
 
 		var slowButton = document.createElement("img");
-		slowButton.src = "http://www.magicscroll.net/bookmarklet/images/minus_1.png";
+		slowButton.src = basedir + "images/minus_1.png";
 		slowButton.title = "Decrease Scroll Speed";
 		slowButton.className = "ss_control_button ss_slow_button ss_unselected";
 		slowButton.onmouseover = function (event) {
@@ -877,7 +877,7 @@ var staticscroll = {
 
 	
 		var refreshButton = document.createElement("img");
-		refreshButton.src = "http://www.magicscroll.net/bookmarklet/images/refresh_1.png";
+		refreshButton.src = basedir + "images/refresh_1.png";
 		refreshButton.title = "Reload Original Page";
 		refreshButton.className = "ss_refresh_button ss_unselected";
 		refreshButton.onmouseover = function (event) {
@@ -892,7 +892,7 @@ var staticscroll = {
 		}
 
 		var bugButton = document.createElement("img");
-		bugButton.src = "http://www.magicscroll.net/bookmarklet/images/bug_1.png";
+		bugButton.src = basedir + "images/bug_1.png";
 		bugButton.title = "Report a bug and we'll fix it";
 		bugButton.className = "ss_bug_button ss_unselected";
 		bugButton.onmouseover = function (event) {
@@ -1028,10 +1028,10 @@ var staticscroll = {
 	
 		}
 		if (staticscroll.isScrolling) {
-			staticscroll.playButton.src = "http://www.magicscroll.net/bookmarklet/images/pause_1.png";
+			staticscroll.playButton.src = basedir + "images/pause_1.png";
 			staticscroll.playButton.title = "Pause Scrolling";
 		} else {
-			staticscroll.playButton.src = "http://www.magicscroll.net/bookmarklet/images/play_1.png";
+			staticscroll.playButton.src = basedir + "images/play_1.png";
 			staticscroll.playButton.title = "Start Scrolling";
 		}
 	},

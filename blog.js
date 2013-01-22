@@ -1,12 +1,14 @@
+var basedir="http://900.magicscrollreader.appspot.com/bookmarklet/";
+
 var link = document.createElement("link");
-link.href = "staticscroll.css";
+link.href = basedir + "staticscroll.css";
 link.type = "text/css";
 link.rel = "stylesheet";
 document.getElementsByTagName("head")[0].appendChild(link);
 
 function loadScript(src) {
 	var script = document.createElement('script'); 
-	script.src = src;
+	script.src = basedir + src;
 	document.documentElement.appendChild(script);
 }
 
