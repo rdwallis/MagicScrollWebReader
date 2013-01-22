@@ -39,6 +39,10 @@ String.prototype.nextWordIndex = function(startpos) {
 
 var basedir="http://www.magicscroll.net/bookmarklet/";
 
+var ss_url = function(resource) {
+	return basedir + resource;
+};
+
 var link = document.createElement("link");
 link.href = basedir + "staticscroll.css";
 link.type = "text/css";
@@ -57,6 +61,15 @@ var readability = {
 
 loadScript("staticscroll.js");
 
+var intId = setInterval("loadStaticScroll()", 10);
+
+function loadStaticScroll() {
+	if (staticscroll) {
+		staticscroll.init();
+		clearInterval(intId);
+	}
+	
+}
 
 
 

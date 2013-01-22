@@ -26,17 +26,21 @@ String.prototype.nextWordIndex = function(startpos) {
 	}
 };
 
-var basedir="http://www.magicscroll.net/bookmarklet/";
+var ss_url = function(resource) {
+	return "http://www.magicscroll.net/bookmarklet/" + resource;
+};
+
+
 
 var link = document.createElement("link");
-link.href = basedir + "staticscroll.css";
+link.href = ss_url("staticscroll.css");
 link.type = "text/css";
 link.rel = "stylesheet";
 document.getElementsByTagName("head")[0].appendChild(link);
 
 function loadScript(src) {
 	var script = document.createElement('script'); 
-	script.src = basedir + src;
+	script.src = ss_url("staticscroll.css");
 	document.documentElement.appendChild(script);
 }
 
@@ -49,9 +53,12 @@ loadScript(scripts[0]);
 var intId = setInterval("loadStaticScroll()", 10);
 
 function loadStaticScroll() {
-	if (readability) {
-		clearInterval(intId);
+	if ((readability) && (!staticscroll)) {
 		loadScript(scripts[1]);
+	} else if (staticscroll) {
+		staticscroll.init();
+		clearInterval(intId);
 	}
+	
 }
 

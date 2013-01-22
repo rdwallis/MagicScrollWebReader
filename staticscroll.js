@@ -23,12 +23,17 @@ var staticscroll = {
 	scroll_speed_display:null,
 	hotKeyDialog: null,
 	innerHotKeyDialog: null,
+	settingsDialog: null,
+	innerSettingsDialog: null,
 	bugReportDiv: null,
 	bugReportMetaInput: null,
 	bugReportButton: null,
 	bugReportCloseButton: null,
 	hotKeysEnabled: true,
 	magicMouse: false,
+	fontSize: 1,
+	colorScheme: 0,
+	rtl: false,
 
 	
 	
@@ -46,8 +51,15 @@ var staticscroll = {
 		if (!staticscroll.article) {
 			
 			staticscroll.article = readability.article.replace(/align=('|")(left|right)('|")/gi, "").replace(/></g, "> <");
-			document.body.className = "ss_body";
-			document.body.style.backgroundImage = "url(images/skewed_print.png)";
+			document.body.className = "ss_body ss_body_cs_" + staticscroll.colorScheme;
+			if (staticscroll.colorScheme == 0) {
+				document.body.style.backgroundImage = "url(" + ss_url("images/skewed_print.png") + ")";
+			} else {
+				document.body.style.backgroundImage = "none";
+			}
+			if (staticscroll.article.search(/dir=['\"]rtl['\"]/img) != -1) {
+				staticscroll.rtl = true;
+			}
 
 		}
 		
@@ -62,7 +74,7 @@ var staticscroll = {
 		if (!staticscroll.topPage) {
 			staticscroll.topPage = document.createElement("DIV");
 			staticscroll.topPage.id = "ss_topPage";
-			staticscroll.topPage.className = "ss_page";
+			staticscroll.topPage.className = "ss_page fs_" + staticscroll.fontSize + " cs_" + staticscroll.colorScheme;
 			// staticscroll.topPage.style.backgroundImage = bground;
 			
 		}
@@ -70,7 +82,7 @@ var staticscroll = {
 		if (!staticscroll.bottomPage) {
 			staticscroll.bottomPage = document.createElement("DIV");
 			staticscroll.bottomPage.id = "ss_bottomPage";
-			staticscroll.bottomPage.className = "ss_page";
+			staticscroll.bottomPage.className = "ss_page fs_" + staticscroll.fontSize + " cs_" + staticscroll.colorScheme;
 			staticscroll.bottomPage.innerHTML = staticscroll.article;
 						// staticscroll.bottomPage.style.backgroundImage =
 						// bground;
@@ -81,7 +93,7 @@ var staticscroll = {
 		if (!staticscroll.prepPage) {
 			staticscroll.prepPage = document.createElement("DIV");
 			staticscroll.prepPage.id = "ss_prepPage";
-			staticscroll.prepPage.className = "ss_page";
+			staticscroll.prepPage.className = "ss_page fs_" + staticscroll.fontSize + " cs_" + staticscroll.colorScheme;
 			
 		}
 
@@ -611,6 +623,147 @@ var staticscroll = {
 			staticscroll.innerHotKeyDialog.style.visibility = "hidden";
 		}
 	},
+	
+	showHideSettingsDialog: function() {
+		log("Showing Settings Dialog", 2);
+		if (!staticscroll.settingsDialog) {
+			log("Creating settings dialog", 2);
+			staticscroll.settingsDialog = document.createElement("div");
+			staticscroll.innerSettingsDialog = document.createElement("p");
+			staticscroll.settingsDialog.className = "ss_settings_container";
+			staticscroll.innerSettingsDialog.className = "ss_settings_dialog";
+			staticscroll.settingsDialog.style.visibility = "hidden";
+			staticscroll.innerSettingsDialog.innerHTML = "<h2>Change Settings: </h2><table cellspacing='10'>"
+			+ "<tr><td><table class='ss_radioSettings'><tr><th colspan='2'>Font Size:</th></tr>" 
+			+ "<tr><td>Small</td><td><input type='radio' name='fontSize' value='small' id='fs_small'></td></tr>"
+			+ "<tr><td>Default</td><td><input type='radio' name='fontSize' value='default' id='fs_default'></td></tr>"
+			+ "<tr><td>Large</td><td><input type='radio' name='fontSize' value='large' id='fs_large'></td></tr>"
+			+ "<tr><td>Largest</td><td><input type='radio' name='fontSize' value='largest' id='fs_largest'></td></tr>"
+			+ "</table></td><td><table class='ss_radioSettings'><tr><th colspan='2'>Color Scheme:</th></tr>"
+			+ "<tr><td>Default</td><td><input type='radio' name='colorScheme' value='default' id='cs_default'></td></tr>"
+			+ "<tr><td>Solar Day</td><td><input type='radio' name='colorScheme' value='Solar Day' id='cs_solar_day'></td></tr>"
+			+ "<tr><td>Solar Night</td><td><input type='radio' name='colorScheme' value='Solar Night' id='cs_solar_night'></td></tr>"
+			+ "<tr><td>Low Contrast</td><td><input type='radio' name='colorScheme' value='Low Contrast' id='cs_low_contrast'></td></tr>"
+			+ "</table></td></table>"
+			+ "<input type='button' value='Save Settings' class='ss_settingsSave' id='ss_saveSettings'/><input type='button' value='Cancel' id='ss_cancelSettings'/>";
+			staticscroll.innerSettingsDialog.style.marginTop = (((window.innerHeight - 288) / 2) - 50) + "px";
+			staticscroll.innerSettingsDialog.style.marginLeft = (((window.innerWidth - 464) / 2) - 15) + "px";
+
+
+			staticscroll.settingsDialog.onclick = function (event) {
+				staticscroll.showHideSettingsDialog();
+			};
+
+			document.body.appendChild(staticscroll.settingsDialog);
+			document.body.appendChild(staticscroll.innerSettingsDialog);
+
+			document.getElementById("ss_cancelSettings").onclick = function() {
+				staticscroll.showHideSettingsDialog();
+			}
+
+			document.getElementById("ss_saveSettings").onclick = function() {
+				staticscroll.saveSettings();
+			}
+
+			
+			switch (staticscroll.fontSize) {
+				case 0: document.getElementById('fs_small').checked = true; break;
+				case 1: document.getElementById('fs_default').checked = true; break;
+				case 2: document.getElementById('fs_large').checked = true; break;
+				case 3: document.getElementById('fs_largest').checked = true; break;
+			}
+			
+
+			
+			switch (staticscroll.colorScheme) {
+				case 0: document.getElementById('cs_default').checked = true; break;
+				case 1: document.getElementById('cs_solar_day').checked = true; break;
+				case 2: document.getElementById('cs_solar_night').checked = true; break;
+				case 3: document.getElementById('cs_low_contrast').checked = true; break;
+			}
+			
+		}
+		if (staticscroll.settingsDialog.style.visibility === "hidden") {
+			staticscroll.settingsDialog.style.visibility = "visible";
+			staticscroll.innerSettingsDialog.style.visibility = "visible";
+		} else {
+			staticscroll.settingsDialog.style.visibility = "hidden";
+			staticscroll.innerSettingsDialog.style.visibility = "hidden";
+		}
+	},
+
+	saveSettings: function() {
+		var orignalFS = staticscroll.fontSize;
+		if (document.getElementById('fs_small').checked) {
+			ss_savelocal({'ss_fs': 0});
+			staticscroll.fontSize = 0;
+		} else if (document.getElementById('fs_default').checked) {
+			ss_savelocal({'ss_fs': 1});
+			staticscroll.fontSize = 1;
+		} else if (document.getElementById('fs_large').checked) {
+			ss_savelocal({'ss_fs': 2});
+			staticscroll.fontSize = 2;
+		} else if (document.getElementById('fs_largest').checked) {
+			ss_savelocal({'ss_fs': 3});
+			staticscroll.fontSize = 3;
+		}
+
+
+		if (document.getElementById('cs_default').checked) {
+			ss_savelocal({'ss_cs': 0});
+			staticscroll.colorScheme = 0;
+		} else if (document.getElementById('cs_solar_day').checked) {
+			ss_savelocal({'ss_cs': 1});
+			staticscroll.colorScheme = 1;
+		} else if (document.getElementById('cs_solar_night').checked) {
+			ss_savelocal({'ss_cs': 2});
+			staticscroll.colorScheme = 2;
+		} else if (document.getElementById('cs_low_contrast').checked) {
+			ss_savelocal({'ss_cs': 3});
+			staticscroll.colorScheme = 3;
+		}
+
+
+
+
+		staticscroll.topPage.className = "ss_page fs_" + staticscroll.fontSize + " cs_" + staticscroll.colorScheme;
+		staticscroll.bottomPage.className = "ss_page fs_" + staticscroll.fontSize + " cs_" + staticscroll.colorScheme;
+		staticscroll.prepPage.className = "ss_page fs_" + staticscroll.fontSize + " cs_" + staticscroll.colorScheme;
+		document.body.className = "ss_body ss_body_cs_" + staticscroll.colorScheme;
+		if (staticscroll.colorScheme == 0) {
+				document.body.style.backgroundImage = "url(" + chrome.extension.getURL("images/skewed_print.png") + ")";
+			} else {
+				document.body.style.backgroundImage = "none";
+			}
+
+		staticscroll.showHideSettingsDialog();
+
+		if (orignalFS != staticscroll.fontSize) {
+			staticscroll.doResize();
+		}
+
+
+	},
+
+	loadFontSize: function(callback) {
+		ss_loadlocal("ss_fs", function(fetchedData){
+			if (fetchedData.ss_fs) {
+				callback(fetchedData.ss_fs);
+			} else {
+				callback(1);
+			}
+		});
+	},
+
+	loadColorScheme: function(callback) {
+		ss_loadlocal("ss_cs", function(fetchedData){
+			if (fetchedData.ss_cs) {
+				callback(fetchedData.ss_cs);
+			} else {
+				callback(0);
+			}
+		});	
+	},
 
 	resizeTimer: 0,
 
@@ -622,6 +775,8 @@ var staticscroll = {
 			staticscroll.bugReportDiv = null;
 			staticscroll.innerHotKeyDialog = null;
 			staticscroll.hotKeyDialog = null;
+			staticscroll.innerSettingsDialog = null;
+			staticscroll.settingsDialog = null;
 			staticscroll.goalPage = staticscroll.pages[staticscroll.currentPage - 1] || 0;
 			staticscroll.pages = [0];
 			staticscroll.lastPage = -1;
@@ -771,7 +926,7 @@ var staticscroll = {
 	createUI: function() {
 		log("Creating UI 8", 2);
 		var nextButton = document.createElement("img");
-		nextButton.src = basedir + "images/next_1.png";
+		nextButton.src = ss_url("images/next_1.png");
 		nextButton.className = "ss_nav_button ss_unselected";
 		var width = Math.round(Math.min(window.innerWidth - 60, Math.max(window.innerHeight * 0.618, 400) + 20));
 		var left = (((window.innerWidth - (width + 120)) / 4) - 24);
@@ -794,7 +949,7 @@ var staticscroll = {
 		}
 
 		var prevButton = document.createElement("img");
-		prevButton.src = basedir + "images/previous_1.png";
+		prevButton.src = ss_url("images/previous_1.png");
 		prevButton.className = "ss_nav_button ss_unselected";
 		prevButton.style.paddingLeft = left;
 		prevButton.style.paddingRight = left;
@@ -818,7 +973,7 @@ var staticscroll = {
 			
 
 		var fastButton = document.createElement("img");
-		fastButton.src = basedir + "images/plus_1.png";
+		fastButton.src = ss_url("images/plus_1.png");
 		fastButton.title = "Increase Scroll Speed";
 
 		fastButton.className = "ss_control_button ss_fast_button ss_unselected";
@@ -834,7 +989,7 @@ var staticscroll = {
 		}
 
 		var slowButton = document.createElement("img");
-		slowButton.src = basedir + "images/minus_1.png";
+		slowButton.src = ss_url("images/minus_1.png");
 		slowButton.title = "Decrease Scroll Speed";
 		slowButton.className = "ss_control_button ss_slow_button ss_unselected";
 		slowButton.onmouseover = function (event) {
@@ -850,7 +1005,7 @@ var staticscroll = {
 
 	
 		var refreshButton = document.createElement("img");
-		refreshButton.src = basedir + "images/refresh_1.png";
+		refreshButton.src = ss_url("images/refresh_1.png");
 		refreshButton.title = "Reload Original Page";
 		refreshButton.className = "ss_refresh_button ss_unselected";
 		refreshButton.onmouseover = function (event) {
@@ -865,7 +1020,7 @@ var staticscroll = {
 		}
 
 		var bugButton = document.createElement("img");
-		bugButton.src = basedir + "images/bug_1.png";
+		bugButton.src = ss_url("images/bug_1.png");
 		bugButton.title = "Report a bug and we'll fix it";
 		bugButton.className = "ss_bug_button ss_unselected";
 		bugButton.onmouseover = function (event) {
@@ -878,12 +1033,28 @@ var staticscroll = {
 		bugButton.onclick = function (event) {
 			staticscroll.showBugReport();
 		}
+		
+		var settingsButton = document.createElement("img");
+		settingsButton.src = ss_url("images/settings.png");
+		settingsButton.title = "Change colors and font sizes";
+		settingsButton.className = "ss_settings_button ss_unselected";
+		settingsButton.onmouseover = function (event) {
+			settingsButton.className = "ss_settings_button";
+		}
+		settingsButton.onmouseout = function (event) {
+			settingsButton.className = "ss_settings_button ss_unselected";
+		}
+
+		settingsButton.onclick = function (event) {
+			staticscroll.showHideSettingsDialog();
+		}
 
 
 
 		staticscroll.scroll_speed_display = document.createElement("div");
 		staticscroll.scroll_speed_display.className = "ss_control_button ss_scroll_speed";
-
+		
+		document.body.appendChild(settingsButton);
 		document.body.appendChild(bugButton);
 		document.body.appendChild(refreshButton);
 		document.body.appendChild(staticscroll.scroll_speed_display);
@@ -915,7 +1086,7 @@ var staticscroll = {
 				var meta = "Unable to parse page";
 				log("Reporting url: " + url + " meta: " + meta, 0);
 				var xhr = new XMLHttpRequest();
-				xhr.open("GET", "http://magicscrollanalytics.appspot.com/reportbug?url=" + url + "&meta=" + meta, true);
+				xhr.open("GET", "http://hrscs04.appspot.com/reportbug?url=" + url + "&meta=" + meta, true);
 				xhr.send();
 				staticscroll.showBugReport();
 				window.alert("Thanks for the report.  We'll try to fix it quickly");
@@ -1001,10 +1172,10 @@ var staticscroll = {
 	
 		}
 		if (staticscroll.isScrolling) {
-			staticscroll.playButton.src = basedir + "images/pause_1.png";
+			staticscroll.playButton.src = ss_url("images/pause_1.png");
 			staticscroll.playButton.title = "Pause Scrolling";
 		} else {
-			staticscroll.playButton.src = basedir + "images/play_1.png";
+			staticscroll.playButton.src = ss_url("images/play_1.png");
 			staticscroll.playButton.title = "Start Scrolling";
 		}
 	},
@@ -1073,12 +1244,18 @@ var staticscroll = {
 	},
 
 	loadScrollSpeed: function() {
-		staticscroll.scrollSpeed = 30;
+		ss_loadsync("ss_scroll_speed", function(fetchedData){
+			if (fetchedData.ss_scroll_speed) {
+				staticscroll.scrollSpeed = fetchedData.ss_scroll_speed;
+			} 
+		});
+		
 		
 	},
 
 	saveScrollSpeed: function(scrollSpeed) {
 		staticscroll.showScrollSpeed();
+		ss_savesync({'ss_scroll_speed': scrollSpeed});
 	},
 
 	increaseScrollSpeed: function() {
@@ -1221,15 +1398,7 @@ var staticscroll = {
 			
 	
 	},
-
-	
-	
-
-
-
-
 	
 };
-log("Starting StaticSccroll", 2);
-staticscroll.init();
+
 
