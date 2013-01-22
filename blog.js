@@ -15,7 +15,7 @@ var scripts = ["log.js", "staticscroll.js"];
 loadScript(scripts[0]);
 
 var readability = {
-	article: document.body.innerHTML
+	article: document.body.innerHTML.replace("[HOST]", window.location.host)
 }
 
 loadScript(scripts[1]);
