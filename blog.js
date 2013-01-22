@@ -10,19 +10,16 @@ function loadScript(src) {
 	document.documentElement.appendChild(script);
 }
 
-var scripts = ["log.js", "readability.js", "staticscroll.js"];
+var scripts = ["log.js", "staticscroll.js"];
 
 loadScript(scripts[0]);
+
+var readability = {
+	article: document.body.innerHTML
+}
+
 loadScript(scripts[1]);
 
 
 
-var intId = setInterval("loadStaticScroll()", 10);
-
-function loadStaticScroll() {
-	if (readability) {
-		clearInterval(intId);
-		loadScript(scripts[2]);
-	}
-}
 

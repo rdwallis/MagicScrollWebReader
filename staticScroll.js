@@ -64,7 +64,6 @@ var staticscroll = {
 		if (!staticscroll.article) {
 			
 			staticscroll.article = readability.article.replace(/align=('|")(left|right)('|")/gi, "").replace(/></g, "> <");
-			//console.log(staticscroll.article);
 			document.body.className = "ss_body";
 			document.body.style.backgroundImage = "url(images/skewed_print.png)";
 
@@ -596,7 +595,7 @@ var staticscroll = {
 
 	showHideHotKeyDialog: function() {
 		if (!staticscroll.hotKeyDialog) {
-			console.log("Creating hotkey dialog");
+			log("Creating hotkey dialog", 2);
 			staticscroll.hotKeyDialog = document.createElement("div");
 			staticscroll.innerHotKeyDialog = document.createElement("p");
 			staticscroll.hotKeyDialog.className = "ss_hotkey_container";
@@ -632,7 +631,7 @@ var staticscroll = {
 	resizeTimer: 0,
 
 	doResize: function() {
-		console.log("Resizing");
+		log("Resizing", 2);
 		clearTimeout(staticscroll.resizeTimer);
 
 		function resize() {
@@ -732,8 +731,6 @@ var staticscroll = {
 			distance = Math.max(distance, -75);
 		}
 		var goal = staticscroll.topPage.clientHeight + distance;
-		// console.log("goal=" + goal + " : window.innerHeight=" +
-		// window.innerHeight);
 		if (goal < 0) {
 			staticscroll.showPrevPage();
 		} else if (goal > staticscroll.getMaxHeight()) {
@@ -788,7 +785,7 @@ var staticscroll = {
 	},
 
 	createUI: function() {
-		console.log("Creating UI 8");
+		log("Creating UI 8", 2);
 		var nextButton = document.createElement("img");
 		nextButton.src = "http://www.magicscroll.net/bookmarklet/images/next_1.png";
 		nextButton.className = "ss_nav_button ss_unselected";
@@ -811,8 +808,6 @@ var staticscroll = {
 		nextButton.onclick = function (event) {
 			staticscroll.showNextPage();
 		}
-	
-		console.log("Creating UI 1");
 
 		var prevButton = document.createElement("img");
 		prevButton.src = "http://www.magicscroll.net/bookmarklet/images/previous_1.png";
@@ -837,8 +832,6 @@ var staticscroll = {
 			staticscroll.startStopScroll();
 		}
 			
-
-		console.log("Creating UI 2");
 
 		var fastButton = document.createElement("img");
 		fastButton.src = "http://www.magicscroll.net/bookmarklet/images/plus_1.png";
@@ -871,8 +864,7 @@ var staticscroll = {
 			staticscroll.decreaseScrollSpeed();
 		}
 
-		console.log("Creating UI 3");
-		
+	
 		var refreshButton = document.createElement("img");
 		refreshButton.src = "http://www.magicscroll.net/bookmarklet/images/refresh_1.png";
 		refreshButton.title = "Reload Original Page";
@@ -908,8 +900,6 @@ var staticscroll = {
 		staticscroll.scroll_speed_display = document.createElement("div");
 		staticscroll.scroll_speed_display.className = "ss_control_button ss_scroll_speed";
 
-		console.log("Creating UI 4");
-
 		document.body.appendChild(bugButton);
 		document.body.appendChild(refreshButton);
 		document.body.appendChild(staticscroll.scroll_speed_display);
@@ -920,8 +910,6 @@ var staticscroll = {
 		document.body.appendChild(slowButton);
 		staticscroll.showBugReport();
 		staticscroll.registerHotKeys();
-		
-		console.log("Creating UI 5");
 	},
 
 	showCenteredBugReport: function() {
@@ -941,7 +929,7 @@ var staticscroll = {
 			staticscroll.bugReportButton.onclick = function(event) {
 				var url = encodeURIComponent(window.location.href);
 				var meta = "Unable to parse page";
-				console.log("Reporting url: " + url + " meta: " + meta);
+				log("Reporting url: " + url + " meta: " + meta, 0);
 				var xhr = new XMLHttpRequest();
 				xhr.open("GET", "http://magicscrollanalytics.appspot.com/reportbug?url=" + url + "&meta=" + meta, true);
 				xhr.send();
@@ -981,7 +969,7 @@ var staticscroll = {
 			staticscroll.bugReportButton.onclick = function(event) {
 				var url = encodeURIComponent(window.location.href);
 				var meta = staticscroll.bugReportMetaInput.value;
-				console.log("Reporting url: " + url + " meta: " + meta);
+				log("Reporting url: " + url + " meta: " + meta, 0);
 				var xhr = new XMLHttpRequest();
 				xhr.open("GET", "http://magicscrollanalytics.appspot.com/reportbug?url=" + url + "&meta=" + meta, true);
 				xhr.send();
@@ -1106,7 +1094,6 @@ var staticscroll = {
 	},
 
 	saveScrollSpeed: function(scrollSpeed) {
-		console.log("Saving scroll speed: " + scrollSpeed);
 		staticscroll.showScrollSpeed();
 	},
 
@@ -1200,7 +1187,7 @@ var staticscroll = {
 					staticscroll.showNextPage();
 				}
 				if ((staticscroll.goalPage !== 0) && (pageIndex > staticscroll.goalPage)) {
-					console.log("Goal Page: " + staticscroll.goalPage);
+					log("Goal Page: " + staticscroll.goalPage, 2);
 					staticscroll.currentPage = Math.max(0, staticscroll.pages.length - 3);
 					staticscroll.showNextPage();
 					staticscroll.showNextPage();
@@ -1259,6 +1246,6 @@ var staticscroll = {
 
 	
 };
-console.log("Starting StaticSccroll");
+log("Starting StaticSccroll", 2);
 staticscroll.init();
 

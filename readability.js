@@ -1,11 +1,4 @@
 
-var dbg = function(s) {
-	if(typeof console !== 'undefined')
-		console.log("Readability: " + s);
-};
-
-
-
 /* Readability. An Arc90 Lab Experiment. 
  * Website: http://lab.arc90.com/experiments/readability
  * Source:  http://code.google.com/p/arc90labs-readability
@@ -62,11 +55,6 @@ var readability = {
 			window.stop();
 		}
 		preserveUnlikelyCandidates = (typeof preserveUnlikelyCandidates == 'undefined') ? false : preserveUnlikelyCandidates;
-		//debugger
-		/*if ((window.location) && (window.location.href)){
-			readability.grandParent = (window.location.href.search(readability.regexps.grandParentRe) !== -1);
-			console.log("Grand Parent: " + readability.grandParent);
-		}*/
 
 		if(document.body && !readability.bodyCache)
 			readability.bodyCache = document.body.innerHTML;
@@ -263,7 +251,7 @@ var readability = {
 			articleContent.innerHTML = articleContent.innerHTML.replace(/<br[^>]*>\s*<p/gi, '<p');		
 		}
 		catch (e) {
-			dbg("Cleaning innerHTML of breaks failed. This is an IE strict-block-elements bug. Ignoring.");
+			log("Cleaning innerHTML of breaks failed. This is an IE strict-block-elements bug. Ignoring.", 1);
 		}
 	},
 	
@@ -349,7 +337,7 @@ var readability = {
 				    unlikelyMatchString.search(readability.regexps.okMaybeItsACandidateRe) == -1 &&
 					node.tagName !== "BODY")
 				{
-					dbg("Removing unlikely candidate - " + unlikelyMatchString);
+					log("Removing unlikely candidate - " + unlikelyMatchString, 2);
 					node.parentNode.removeChild(node);
 					nodeIndex--;
 					continue;
@@ -359,7 +347,7 @@ var readability = {
 			/* Turn all divs that don't have children block level elements into p's */
 			if (node.tagName === "DIV") {
 				if (node.innerHTML.search(readability.regexps.divToPElementsRe) === -1)	{
-					dbg("Altering div to p");
+					log("Altering div to p", 2);
 					var newNode = document.createElement('p');
 					try {
 						newNode.innerHTML = node.innerHTML;				
@@ -368,7 +356,7 @@ var readability = {
 					}
 					catch(e)
 					{
-						dbg("Could not alter div to p, probably an IE restriction, reverting back to div.")
+						log("Could not alter div to p, probably an IE restriction, reverting back to div.", 1)
 					}
 				}
 				else
@@ -377,7 +365,7 @@ var readability = {
 					for(var i = 0, il = node.childNodes.length; i < il; i++) {
 						var childNode = node.childNodes[i];
 						if(childNode.nodeType == Node.TEXT_NODE) {
-							dbg("replacing text node with a p tag with the same content.");
+							log("replacing text node with a p tag with the same content.", 2);
 							var p = document.createElement('p');
 							p.innerHTML = childNode.nodeValue;
 							p.style.display = 'inline';
@@ -408,7 +396,7 @@ var readability = {
 			if(innerText.length < 25)
 				continue;
 
-			dbg("Considering paragraph " + j + ": " + innerText.substring(0, 20));
+			log("Considering paragraph " + j + ": " + innerText.substring(0, 20), 3);
 			/* Initialize readability data for the parent. */
 			if(typeof parentNode.readability == 'undefined')
 			{
@@ -437,7 +425,7 @@ var readability = {
 			/* Add the score to the parent. The grandparent gets half. */
 			parentNode.readability.contentScore += contentScore;
 			grandParentNode.readability.contentScore += contentScore/2;
-			dbg("contentScore=" + contentScore);
+			log("contentScore=" + contentScore, 2);
 		}
 
 		/**
@@ -454,7 +442,7 @@ var readability = {
 			**/
 			candidates[i].readability.contentScore = candidates[i].readability.contentScore * (1-readability.getLinkDensity(candidates[i]));
 			
-			dbg('Candidate: ' + candidates[i] + " (" + candidates[i].className + ":" + candidates[i].id + ") with score " + candidates[i].readability.contentScore);
+			log('Candidate: ' + candidates[i] + " (" + candidates[i].className + ":" + candidates[i].id + ") with score " + candidates[i].readability.contentScore, 2);
 
 			
 
@@ -491,7 +479,7 @@ var readability = {
 		var articleContent        = document.createElement("DIV");
 	        articleContent.id     = "readability-content";
 		var siblingScoreThreshold = Math.max(10, topCandidate.readability.contentScore * 0.2);
-		console.log("Top Candidates: " + topCandidates.length);
+		log("Top Candidates: " + topCandidates.length, 2);
 		for (var k =0; k < topCandidates.length; k++) {
 			var siblingNodes          = topCandidates[k].parentNode.childNodes;
 			for(var i=0, il=siblingNodes.length; i < il; i++)
@@ -499,8 +487,8 @@ var readability = {
 				var siblingNode = siblingNodes[i];
 				var append      = false;
 
-				dbg("Looking at sibling node: " + siblingNode + " (" + siblingNode.className + ":" + siblingNode.id + ")" + ((typeof siblingNode.readability != 'undefined') ? (" with score " + siblingNode.readability.contentScore) : ''));
-				dbg("Sibling has score " + (siblingNode.readability ? siblingNode.readability.contentScore : 'Unknown'));
+				log("Looking at sibling node: " + siblingNode + " (" + siblingNode.className + ":" + siblingNode.id + ")" + ((typeof siblingNode.readability != 'undefined') ? (" with score " + siblingNode.readability.contentScore) : ''), 2);
+				log("Sibling has score " + (siblingNode.readability ? siblingNode.readability.contentScore : 'Unknown'), 2);
 
 				if(siblingNode === topCandidates[k])
 				{
@@ -529,7 +517,7 @@ var readability = {
 
 				if(append)
 				{
-					dbg("Appending node: " + siblingNode);
+					log("Appending node: " + siblingNode, 2);
 
 					/* Append sibling and subtract from our list because it removes the node when you append to another node */
 					articleContent.appendChild(siblingNode);
@@ -691,7 +679,7 @@ var readability = {
 			e.innerHTML = e.innerHTML.replace(readability.regexps.killBreaksRe,'<br />');		
 		}
 		catch (e) {
-			dbg("KillBreaks failed - this is an IE bug. Ignoring.");
+			log("KillBreaks failed - this is an IE bug. Ignoring.", 1);
 		}
 	},
 
@@ -737,7 +725,7 @@ var readability = {
 		for (var i=curTagsLength-1; i >= 0; i--) {
 			var weight = readability.getClassWeight(tagsList[i]);
 
-			dbg("Cleaning Conditionally " + tagsList[i] + " (" + tagsList[i].className + ":" + tagsList[i].id + ")" + ((typeof tagsList[i].readability != 'undefined') ? (" with score " + tagsList[i].readability.contentScore) : ''));
+			log("Cleaning Conditionally " + tagsList[i] + " (" + tagsList[i].className + ":" + tagsList[i].id + ")" + ((typeof tagsList[i].readability != 'undefined') ? (" with score " + tagsList[i].readability.contentScore) : ''), 2);
 
 			if(weight < 0)
 			{
@@ -845,6 +833,6 @@ var readability = {
 	}
 	
 };
-console.log("Starting Readability");
+log("Starting Readability", 2);
 readability.init();
 
