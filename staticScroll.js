@@ -270,10 +270,10 @@ var staticscroll = {
 		    // normalize the delta
 		    if (event.wheelDelta) {
 		 
-		    	if ((!staticscroll.magicMouse) && (Math.abs(event.wheelDelta) >= 120)) {
+		    	if ((!staticscroll.magicMouse) && (Math.abs(event.wheelDelta) >= 60)) {
 		        	delta = event.wheelDelta / 120;	
 		        } else {
-
+		        	//log("MagicMouse", 0);
 		        	staticscroll.magicMouse = true;
 		        	delta = -event.wheelDelta;
 		        	
@@ -286,9 +286,6 @@ var staticscroll = {
 		        delta = -event.detail;
 		    }
 		    log("Delta: " + delta, 2);
-		    if (delta == 0) {
-		    	delta = 1;
-		    }
 		    var count = 0;
 		    if (staticscroll.magicMouse) {
 		    	staticscroll.scroll(delta);
