@@ -1,8 +1,10 @@
+var basedir="http://www.magicscroll.net/bookmarklet/";
+
 var log = function(s, level) {
 	if (!level) {
 		level = 0;
 	}
-	if ((level < 1) && (typeof console !== 'undefined')) {
+	if ((level < 3) && (typeof console !== 'undefined')) {
 		console.log(s);
 	}
 };
@@ -37,10 +39,28 @@ String.prototype.nextWordIndex = function(startpos) {
 	}
 };
 
-var basedir="http://www.magicscroll.net/bookmarklet/";
-
 var ss_url = function(resource) {
 	return basedir + resource;
+};
+
+var ss_state = {};
+
+var ss_loadlocal = function(key, callback) {
+	callback(ss_state);
+};
+
+var ss_savelocal = function (obj) {
+	for (var key in obj) {
+		ss_state[key] = obj[key];
+	}
+};
+
+var ss_loadsync = function(key, callback) {
+	ss_loadlocal(key, callback);
+};
+
+var ss_savesync = function(object) {
+	ss_savelocal(object);
 };
 
 var link = document.createElement("link");
@@ -55,16 +75,16 @@ function loadScript(src) {
 	document.documentElement.appendChild(script);
 }
 
-var readability = {
-	article: document.body.innerHTML.replace("[BASEDIR]", basedir)
-}
+
+
+
 
 loadScript("staticscroll.js");
 
 var intId = setInterval("loadStaticScroll()", 10);
 
 function loadStaticScroll() {
-	if (staticscroll) {
+	if (typeof staticscroll != 'undefined') {
 		staticscroll.init();
 		clearInterval(intId);
 	}

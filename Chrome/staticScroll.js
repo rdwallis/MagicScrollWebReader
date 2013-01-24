@@ -100,7 +100,7 @@ var staticscroll = {
 		if (!staticscroll.topPage) {
 			staticscroll.topPage = document.createElement("DIV");
 			staticscroll.topPage.id = "ss_topPage";
-			staticscroll.topPage.className = "ss_page fs_" + staticscroll.fontSize + " cs_" + staticscroll.colorScheme;;
+			staticscroll.topPage.className = "ss_page fs_" + staticscroll.fontSize + " cs_" + staticscroll.colorScheme;
 			//staticscroll.topPage.style.backgroundImage = bground;
 			
 		}

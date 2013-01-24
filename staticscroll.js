@@ -623,7 +623,7 @@ var staticscroll = {
 			staticscroll.innerHotKeyDialog.style.visibility = "hidden";
 		}
 	},
-	
+	originalFS: null,
 	showHideSettingsDialog: function() {
 		log("Showing Settings Dialog", 2);
 		if (!staticscroll.settingsDialog) {
@@ -645,7 +645,11 @@ var staticscroll = {
 			+ "<tr><td>Solar Night</td><td><input type='radio' name='colorScheme' value='Solar Night' id='cs_solar_night'></td></tr>"
 			+ "<tr><td>Low Contrast</td><td><input type='radio' name='colorScheme' value='Low Contrast' id='cs_low_contrast'></td></tr>"
 			+ "</table></td></table>"
-			+ "<input type='button' value='Save Settings' class='ss_settingsSave' id='ss_saveSettings'/><input type='button' value='Cancel' id='ss_cancelSettings'/>";
+			+ "<strong>Drag the following link to your bookmarks bar to save these settings:</strong> <br/>"
+			+ "<a id='ss_bookmarklet' onclick='alert(\"Drag the link to your bookmarks bar\"); return false;'"
+            + "href='javascript:(function(){var resource = document.createElement(\"script\");"
+			+ "resource.src = \"" + ss_url("init.js") + "\";  document.documentElement.appendChild(resource);}());'>Read with MagicScroll</a> <br/>"
+			+ "<input type='button' value='Close Settings' class='ss_settingsClose' id='ss_cancelSettings'/>";
 			staticscroll.innerSettingsDialog.style.marginTop = (((window.innerHeight - 288) / 2) - 50) + "px";
 			staticscroll.innerSettingsDialog.style.marginLeft = (((window.innerWidth - 464) / 2) - 15) + "px";
 
@@ -657,14 +661,33 @@ var staticscroll = {
 			document.body.appendChild(staticscroll.settingsDialog);
 			document.body.appendChild(staticscroll.innerSettingsDialog);
 
-			document.getElementById("ss_cancelSettings").onclick = function() {
+			document.getElementById("ss_cancelSettings").onclick = function(event) {
 				staticscroll.showHideSettingsDialog();
-			}
-
-			document.getElementById("ss_saveSettings").onclick = function() {
+			};
+			
+			document.getElementById("ss_bookmarklet").href = "javascript:(function(){"
+				+	"window.ss_bookmarkletstate = " + JSON.stringify(ss_state) + "; "
+				+	"var resource = document.createElement(\"script\");"
+				+ "resource.src = \"" + ss_url("init.js") + "\";  document.documentElement.appendChild(resource);}());";
+			
+			var saveSettings = function (event) {
 				staticscroll.saveSettings();
 			}
+				
+			document.getElementById("fs_small").onclick = saveSettings;
+			document.getElementById("fs_default").onclick = saveSettings;
+			document.getElementById("fs_large").onclick = saveSettings;
+			document.getElementById("fs_largest").onclick = saveSettings;
+			
+			document.getElementById("cs_default").onclick = saveSettings;
+			document.getElementById("cs_solar_day").onclick = saveSettings;
+			document.getElementById("cs_solar_night").onclick = saveSettings;
+			document.getElementById("cs_low_contrast").onclick = saveSettings;
+			
+			staticscroll.settingsDialog.style.visibility = "hidden";
+			staticscroll.innerSettingsDialog.style.visibility = "hidden";
 
+				
 			
 			switch (staticscroll.fontSize) {
 				case 0: document.getElementById('fs_small').checked = true; break;
@@ -684,16 +707,21 @@ var staticscroll = {
 			
 		}
 		if (staticscroll.settingsDialog.style.visibility === "hidden") {
+			staticscroll.orignalFS = staticscroll.fontSize;
 			staticscroll.settingsDialog.style.visibility = "visible";
 			staticscroll.innerSettingsDialog.style.visibility = "visible";
 		} else {
 			staticscroll.settingsDialog.style.visibility = "hidden";
 			staticscroll.innerSettingsDialog.style.visibility = "hidden";
+			if (staticscroll.orignalFS != staticscroll.fontSize) {
+				staticscroll.doResize();
+			}
+
 		}
 	},
 
 	saveSettings: function() {
-		var orignalFS = staticscroll.fontSize;
+		log("Saving Settings", 2);
 		if (document.getElementById('fs_small').checked) {
 			ss_savelocal({'ss_fs': 0});
 			staticscroll.fontSize = 0;
@@ -731,17 +759,15 @@ var staticscroll = {
 		staticscroll.prepPage.className = "ss_page fs_" + staticscroll.fontSize + " cs_" + staticscroll.colorScheme;
 		document.body.className = "ss_body ss_body_cs_" + staticscroll.colorScheme;
 		if (staticscroll.colorScheme == 0) {
-				document.body.style.backgroundImage = "url(" + chrome.extension.getURL("images/skewed_print.png") + ")";
+				document.body.style.backgroundImage = "url(" + ss_url("images/skewed_print.png") + ")";
 			} else {
 				document.body.style.backgroundImage = "none";
 			}
 
-		staticscroll.showHideSettingsDialog();
-
-		if (orignalFS != staticscroll.fontSize) {
-			staticscroll.doResize();
-		}
-
+		document.getElementById("ss_bookmarklet").href = "javascript:(function(){"
+			+	"window.ss_bookmarkletstate = " + JSON.stringify(ss_state) + "; "
+			+	"var resource = document.createElement(\"script\");"
+			+ "resource.src = \"" + ss_url("init.js") + "\";  document.documentElement.appendChild(resource);}());";
 
 	},
 

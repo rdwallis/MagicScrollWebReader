@@ -1,3 +1,5 @@
+var basedir="http://www.magicscroll.net/bookmarklet/";
+
 var log = function(s, level) {
 	if (!level) {
 		level = 0;
@@ -27,9 +29,30 @@ String.prototype.nextWordIndex = function(startpos) {
 };
 
 var ss_url = function(resource) {
-	return "http://www.magicscroll.net/bookmarklet/" + resource;
+	return basedir + resource;
 };
 
+var ss_state = (typeof window.ss_bookmarkletstate != 'undefined') ? window.ss_bookmarkletstate : {};
+
+
+
+var ss_loadlocal = function(key, callback) {
+	callback(ss_state);
+};
+
+var ss_savelocal = function (obj) {
+	for (var key in obj) {
+		ss_state[key] = obj[key];
+	}
+};
+
+var ss_loadsync = function(key, callback) {
+	ss_loadlocal(key, callback);
+};
+
+var ss_savesync = function(object) {
+	ss_savelocal(object);
+};
 
 
 var link = document.createElement("link");
@@ -40,7 +63,7 @@ document.getElementsByTagName("head")[0].appendChild(link);
 
 function loadScript(src) {
 	var script = document.createElement('script'); 
-	script.src = ss_url("staticscroll.css");
+	script.src = ss_url(src);
 	document.documentElement.appendChild(script);
 }
 
@@ -53,9 +76,11 @@ loadScript(scripts[0]);
 var intId = setInterval("loadStaticScroll()", 10);
 
 function loadStaticScroll() {
-	if ((readability) && (!staticscroll)) {
+	if ((typeof readability != 'undefined') && (typeof staticscroll == 'undefined')) {
 		loadScript(scripts[1]);
-	} else if (staticscroll) {
+	} else if (typeof staticscroll != 'undefined') {
+		staticscroll.fontSize = ss_state.ss_fs || 1;
+		staticscroll.colorScheme = ss_state.ss_cs || 0;
 		staticscroll.init();
 		clearInterval(intId);
 	}

@@ -1,4 +1,4 @@
-﻿.ss_body {
+.ss_body {
 	postion:absolute!important;
 	margin:0px!important;
 	padding:0px!important;
@@ -227,12 +227,17 @@
 	opacity: 1;
 	display:block;
 	width: 29em;
-	height: 18em;
+	height: 23em;
 	border: solid 3px black;
 	background: white;
 	color: black;
 	border-radius: 10px;
 	padding: 10px;
+}
+
+.ss_settings_dialog strong, .ss_settings_dialog a{
+	padding-left: 1em;
+	display:block;
 }
 
 
@@ -247,6 +252,10 @@
 
 .ss_settings_dialog input[type='button'] {
 	font-size: 1.2em;
+}
+
+.ss_settingsClose{
+	margin-left: 18.5em;
 }
 
 .fs_0 {
