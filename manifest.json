@@ -1,6 +1,6 @@
 ﻿{
   "name": "MagicScroll Web Reader",
-  "version": "2.4",
+  "version": "2.8",
   "manifest_version": 2,
   "description": "Read the web with MagicScroll",
   "browser_action": {
@@ -20,7 +20,7 @@
   "web_accessible_resources": ["images/next_1.png", "images/previous_1.png",
   "images/play_1.png", "images/minus_1.png", 
   "images/pause_1.png",  "images/plus_1.png", 
-  "images/refresh_1.png", "images/skewed_print.png",  "images/bug_1.png", "images/settings.png"],
+  "images/refresh_1.png", "images/skewed_print.png",  "images/bug_1.png", "images/settings.png", "images/load.gif"],
   "icons": {
       "128": "images/icon128.png",
       "16": "images/icon19.png",

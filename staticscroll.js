@@ -69,6 +69,7 @@ var staticscroll = {
 		/* Clear the old HTML, insert the new content. */
 		document.body.innerHTML = "";
 		document.body.style.height = window.innerHeight + "px!important";
+		ss_load.init();
 
 		/* Initialize pages */
 		if (!staticscroll.topPage) {
@@ -189,6 +190,7 @@ var staticscroll = {
 		staticscroll.processPages();
 
 		staticscroll.createUI();
+		ss_load.hide();
 	},
 
 	registerHotKeys: function() {
@@ -258,7 +260,7 @@ var staticscroll = {
 		        } else {
 		        	//log("MagicMouse", 0);
 		        	staticscroll.magicMouse = true;
-		        	delta = -event.wheelDelta;
+		        	delta = event.wheelDelta;
 		        	
 		        }
 		        
@@ -763,11 +765,6 @@ var staticscroll = {
 			} else {
 				document.body.style.backgroundImage = "none";
 			}
-
-		document.getElementById("ss_bookmarklet").href = "javascript:(function(){"
-			+	"window.ss_bookmarkletstate = " + JSON.stringify(ss_state) + "; "
-			+	"var resource = document.createElement(\"script\");"
-			+ "resource.src = \"" + ss_url("init.js") + "\";  document.documentElement.appendChild(resource);}());";
 
 	},
 

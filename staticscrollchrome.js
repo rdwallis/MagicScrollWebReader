@@ -5,7 +5,7 @@ staticscroll.showHideSettingsDialog = function() {
 		staticscroll.settingsDialog = document.createElement("div");
 		staticscroll.innerSettingsDialog = document.createElement("p");
 		staticscroll.settingsDialog.className = "ss_settings_container";
-		staticscroll.innerSettingsDialog.className = "ss_settings_dialog";
+		staticscroll.innerSettingsDialog.className = "ss_settings_dialog ss_settings_chrome";
 		staticscroll.settingsDialog.style.visibility = "hidden";
 		staticscroll.innerSettingsDialog.innerHTML = "<h2>Change Settings: </h2><table cellspacing='10'>"
 		+ "<tr><td><table class='ss_radioSettings'><tr><th colspan='2'>Font Size:</th></tr>" 
@@ -37,6 +37,7 @@ staticscroll.showHideSettingsDialog = function() {
 
 		document.getElementById("ss_saveSettings").onclick = function() {
 			staticscroll.saveSettings();
+			staticscroll.showHideSettingsDialog();
 		}
 
 		

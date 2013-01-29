@@ -72,6 +72,7 @@ var readability = {
 		if(readability.getInnerText(articleContent, false) == "")
 		{
 			if(!preserveUnlikelyCandidates) {
+				log("Discarding Unlikely Candidates", 2);
 				document.body.innerHTML = readability.bodyCache;
 				return readability.init(true);				
 			}
@@ -196,9 +197,12 @@ var readability = {
 			if (navigator.appName != "Microsoft Internet Explorer")
 				styleTags[j].textContent = "";
 
+
 		/* Turn all double br's into p's */
 		/* Note, this is pretty costly as far as processing goes. Maybe optimize later. */
-		document.body.innerHTML = document.body.innerHTML.replace(readability.regexps.replaceBrsRe, '</p><p>').replace(readability.regexps.replaceFontsRe, '<$1span>')
+		document.body.innerHTML = document.body.innerHTML.replace(readability.regexps.replaceBrsRe, '</p><p>').replace(readability.regexps.replaceFontsRe, '<$1span>');
+		ss_load.init();
+
 
 	},
 
