@@ -69,7 +69,7 @@ var staticscroll = {
 		/* Clear the old HTML, insert the new content. */
 		document.body.innerHTML = "";
 		document.body.style.height = window.innerHeight + "px!important";
-		ss_load.init();
+		ss_load.show();
 
 		/* Initialize pages */
 		if (!staticscroll.topPage) {
