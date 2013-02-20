@@ -36,7 +36,7 @@ var readability = {
 		normalizeRe: /\s{2,}/g,
 		killBreaksRe: /(<br\s*\/?>(\s|&nbsp;?)*){1,}/g,
 		videoRe: /http:\/\/(www\.)?(youtube|vimeo)\.com/i,
-		grandParentRe: /http:\/\/(www\.)?(vanityfair)\.com/i,
+		ignoreArticleTagRe: /http:\/\/(www\.)?(economist)\.com\/blogs/i
 
 	},
 
@@ -194,7 +194,7 @@ var readability = {
 		var articles = document.getElementsByTagName("article");
 		//var result = readability.regexps.articleTagRe.exec(document.body.innerHTML);
 		//log("Result: " + result, -1);
-		if(articles.length > 0) {
+		if((articles.length > 0) && (window.location.href.search(readability.regexps.ignoreArticleTagRe) == -1)) {
 			var result = "";
 			for (var i = 0; i < articles.length; i++) {
 				log("Article " + i + ": \n" + articles[i].innerHTML, -1);
