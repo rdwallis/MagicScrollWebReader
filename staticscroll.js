@@ -1221,7 +1221,7 @@ var staticscroll = {
 		}
 		staticscroll.updatePlayButton();
 	},
-
+	
 	autoScroll: function() {
 		var pageHeight = staticscroll.topPage.clientHeight;
 		if (staticscroll.startScrollTime === 0) {
@@ -1240,8 +1240,10 @@ var staticscroll = {
 					staticscroll.totalScrollTime = Math.max(staticscroll.totalScrollDistance * 10, ((charactersInSection * 1000) / staticscroll.scrollSpeed));
 				} else {
 					if (staticscroll.scrollInfo[staticscroll.currentPage]) {
-						staticscroll.startScrollTime = 0;
 						staticscroll.showNextPage();
+						staticscroll.startScrollTime = 0;
+						return;
+
 					} else {
 						staticscroll.progressIndicator.innerHTML = "99.99%";
 						staticscroll.startStopScroll();
